@@ -1,9 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
-import { Box, AppBar, IconButton, Toolbar, Typography, Button, Container, Card, CardContent, CardActions, CardMedia, InputBase, Divider, Stack, Paper, BottomNavigation } from '@mui/material';
+import { Box, AppBar, IconButton, Toolbar, Typography, Button, Container, Card, CardContent, CardActions, CardMedia, InputBase, Divider, Stack, Paper, BottomNavigation, Grid } from '@mui/material';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
-
-
 
 const theme = createTheme({
   palette: {
@@ -23,8 +21,30 @@ const Div = styled('div')(({ theme }) => ({
   padding: theme.spacing(1),
 }));
 
+interface GithubRepositories {
+  id: number;
+  name: string;
+  description: string;
+}
+
+const getData = async () => {
+  return await fetch(`https://api.github.com/users/vladdy-moses/repos`)
+  .then(res => res.json())
+  .then((res: GithubRepositories[]) => {
+      console.log(res);
+      return res
+  })
+};
+
 
 function App() {
+  const [data, setData] = useState<GithubRepositories[]>([]);
+
+  useEffect(() => {
+    getData().then((res) => {
+      setData(res);
+    });
+  }, []);
   return (
     <Box sx={{ my: 8, bgcolor: 'E5E5E5' }}>
       <ThemeProvider theme={theme}>
@@ -43,128 +63,33 @@ function App() {
           Patch Notes
         </Typography>
         <Divider />
-        <Stack direction="row" spacing={20} sx={{ mx: 4, my: 2 }}>
-          <Card sx={{ maxWidth: 345 }}>
-            <CardMedia
-              component="img"
-              alt="monster image"
-              height="140"
-              src="https%3A%2F%2Fmobile.twitter.com%2Fdeathtrash"
-            />
-            <CardContent>
-              <Typography gutterBottom variant="h5" component="div">
-                Patch 1.2
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                For this patch we added more weapons, enemies, allies and places to visit. For more info click button below...
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <Button variant="contained" size="small" color="primary">More</Button>
-            </CardActions>
-          </Card>
-          <Card sx={{ maxWidth: 345 }}>
-            <CardMedia
-              component="img"
-              alt="monster image"
-              height="140"
-              image="/images/attention.png"
-            />
-            <CardContent>
-              <Typography gutterBottom variant="h5" component="div">
-                Patch 1.1
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                For this patch we added more weapons, enemies, allies and places to visit. For more info click button below...
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <Button variant="contained" size="small" color="primary">More</Button>
-            </CardActions>
-          </Card>
-          <Card sx={{ maxWidth: 345 }}>
-            <CardMedia
-              component="img"
-              alt="monster image"
-              height="140"
-              image="/images/attention.png"
-            />
-            <CardContent>
-              <Typography gutterBottom variant="h5" component="div">
-                Patch 1.0
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                For this patch we added more weapons, enemies, allies and places to visit. For more info click button below...
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <Button variant="contained" size="small" color="primary">More</Button>
-            </CardActions>
-          </Card>
+        <Grid style={{ marginTop: 100 }}
+        id="cards"
+        sx={{
+          margin: 5,
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "center"
+        }}>
+        {data.map((item) => (
+          <Grid item xs={6}>
+            <Card key={item.id} sx={{
+              backgroundColor: "#191715",
+              color: "#E44B23",
+              height: 180,
+              margin: 3
+            }}>
+              <CardContent>
+                <Typography variant="h5" component="div" textAlign="center"> {item.name} </Typography>
+                <Typography variant="h6" color="#E44B23">
+                  {item.description}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
 
-        </Stack>
-        <Typography variant="h2" color="secondary" align='center'>
-          .
-        </Typography>
-        <Stack direction="row" spacing={20} sx={{ mx: 4, my: 2 }}>
-          <Card sx={{ maxWidth: 345 }}>
-            <CardMedia
-              component="img"
-              alt="monster image"
-              height="140"
-              image="/images/attention.png"
-            />
-            <CardContent>
-              <Typography gutterBottom variant="h5" component="div">
-                Patch 0.03
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                For this patch we added more weapons, enemies, allies and places to visit. For more info click button below...
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <Button variant="contained" size="small" color="primary">More</Button>
-            </CardActions>
-          </Card>
-          <Card sx={{ maxWidth: 345 }}>
-            <CardMedia
-              component="img"
-              alt="monster image"
-              height="140"
-              image="/images/attention.png"
-            />
-            <CardContent>
-              <Typography gutterBottom variant="h5" component="div">
-                Patch 0.02
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                For this patch we added more weapons, enemies, allies and places to visit. For more info click button below...
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <Button variant="contained" size="small" color="primary">More</Button>
-            </CardActions>
-          </Card>
-          <Card sx={{ maxWidth: 345 }}>
-            <CardMedia
-              component="img"
-              alt="monster image"
-              height="140"
-              image="/images/attention.png"
-            />
-            <CardContent>
-              <Typography gutterBottom variant="h5" component="div">
-                Patch 0.01
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                For this patch we added more weapons, enemies, allies and places to visit. For more info click button below...
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <Button variant="contained" size="small" color="primary">More</Button>
-            </CardActions>
-          </Card>
-        </Stack>
+      </Grid>
       </ThemeProvider>
       <Div>
         <BottomNavigation>
